@@ -16,7 +16,7 @@
                 <button class="btn btn-danger mx-1">Delete</button>
             </div>
 
-            <h3 class="my-5">Settings</h3>
+            <h3 class="my-4">Settings</h3>
 
             <div class="form-group m-0 p-0 d-flex justify-content-between align-items-center">
                 <label for="background-image">Background Image</label>
@@ -42,7 +42,7 @@
                 <label for="days-shown">Days Shown</label>
                 <div class="">
                     <div v-for="(day, index) in days" :key="index" class="form-check form-check-inline">
-                        <input class="form-check-input" :id="'day' + index" type="checkbox" :value="day.value" v-model="selectedDays">
+                        <input class="form-check-input" :id="'day' + index" type="checkbox" :value="day.value">
                         <label class="form-check-label" :for="'day' + index">{{ day.name }}</label>
                     </div>
                 </div>
@@ -51,20 +51,14 @@
             <div class="form-group">
                 <label for="days-shown">Dimensions</label>
                 <div class="">
-                    <div class="form-check my-1">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="" value="option1">
-                        <label class="form-check-label" for="">
-                          Desktop
+                    <div v-for="(dim, index) in dimensions" :key="index" class="form-check my-1">
+                        <input class="form-check-input" type="radio" name="dimension" :id="dim.name" :value="dim.name">
+                        <label class="form-check-label" :id="dim.name">
+                            {{ dim.name }} ({{ dim.width }} x {{ dim.height }})
                         </label>
                     </div>
                     <div class="form-check my-1">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="" value="option1">
-                        <label class="form-check-label" for="">
-                          Desktop
-                        </label>
-                    </div>
-                    <div class="form-check my-1">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="" value="option1">
+                        <input class="form-check-input" type="radio" name="dimension" id="" value="Custom">
                         <div class="d-flex">
                             <label class="form-check-label" for="">
                                 Custom:
@@ -85,6 +79,8 @@
 </template>
   
 <script>
+import { days, dimensions } from '@/assets/data';
+
 export default {
   name: 'Sidebar',
   props: {
@@ -94,16 +90,8 @@ export default {
     return {
       selectedImage: null,
       selectedColor: null,
-      days: [
-        { name: 'Sun', value: 0 },
-        { name: 'Mon', value: 1 },
-        { name: 'Tue', value: 2 },
-        { name: 'Wed', value: 3 },
-        { name: 'Thu', value: 4 },
-        { name: 'Fri', value: 5 },
-        { name: 'Sat', value: 6 }
-      ],
-      selectedDays: []
+      days: days,
+      dimensions: dimensions,
     };
   },
   methods: {
@@ -126,47 +114,52 @@ export default {
   
 <style scoped>
 .shadow {
-    background-color: #282A36; 
-    transition: transform 0.3s ease;
+  background-color: #282A36;
+  transition: transform 0.3s ease;
 }
+
 .slide-out {
-    transform: translateX(-100%);
+  transform: translateX(-100%);
 }
-svg{
-    cursor: pointer;
+
+svg {
+  cursor: pointer;
 }
+
 input[type="text"] {
-    background-color: transparent;
-    border: 0;
-    border-bottom: 1px solid #fff;
-    color: #fff;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid #fff;
+  color: #fff;
 }
 
-::-ms-input-placeholder { /* Edge 12-18 */
-    color: #fff;
-  }
-  
-  ::placeholder {
-    color: #fff;
-  }
+::-ms-input-placeholder {
+  /* Edge 12-18 */
+  color: #fff;
+}
 
-  .image-preview {
-    background-color: #ccc;
-    width: 40px;
-    height: 40px;
-  }
-  .image-preview img {
-    max-width: 100%;
-    max-height: 100%;
-  }
+::placeholder {
+  color: #fff;
+}
 
-  .color-preview {
-    cursor: pointer;
-  }
-  
-  .color-box {
-    background-color: #ccc;
-    width: 40px;
-    height: 40px;
-  }
+.image-preview {
+  background-color: #ccc;
+  width: 40px;
+  height: 40px;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.color-preview {
+  cursor: pointer;
+}
+
+.color-box {
+  background-color: #ccc;
+  width: 40px;
+  height: 40px;
+}
 </style>
