@@ -21,6 +21,7 @@
 <script>
 import Sidebar from '../Sidebar.vue';
 import AddClass from '../AddClass.vue';
+import { auth } from '../../../firebase';
 
 export default {
     name: 'Home',
@@ -30,8 +31,11 @@ export default {
     },
     data() {
         return {
-            sidebarHidden: false
+            sidebarHidden: true
         };
+    },
+    created() {
+        //    
     },
     methods: {
         toggleSidebar() {

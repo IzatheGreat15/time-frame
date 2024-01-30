@@ -1,9 +1,14 @@
 <template>
     <div class="sidebar shadow h-full col-sm-12 col-md-4 position-absolute p-4" :class="{ 'slide-out': isHidden }" style="z-index: 1000">
-        <div class="text-right">
+        <div class="d-flex justify-content-between align-tems-center">
+          <div class="text-left" @click="logout" style="cursor: pointer;">
+            Logout
+          </div>
+          <div class="text-right">
             <svg xmlns="http://www.w3.org/2000/svg" @click="$emit('toggleSidebar')" width="24" height="24" fill="currentColor" class="bi bi-list text-center" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
             </svg>
+          </div>
         </div>
         <form action="" class="mt-3 text-white">
             <div class="d-flex">
@@ -80,6 +85,7 @@
   
 <script>
 import { days, dimensions } from '@/assets/data';
+import { auth } from '../../firebase';
 
 export default {
   name: 'Sidebar',
@@ -107,8 +113,14 @@ export default {
     },
     handleColorInputChange(event) {
       this.selectedColor = event.target.value;
+    },
+    logout() {
+      auth.signOut()
+        .then(() => {
+          window.location.href = '/login';
+        });
     }
-  }
+  },
 };
 </script>
   
