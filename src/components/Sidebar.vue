@@ -75,7 +75,10 @@
                   </div>
                 </div>
 
-                <div class="my-3 text-right">
+                <div class="my-3 text-right d-flex justify-content-end align-items-center">
+                  <div v-if="loading" class="spinner-border spinner-border-sm text-light mr-2" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
                   <button class="btn btn-light" type="submit">Save</button>
                 </div>
               </div>
@@ -86,12 +89,15 @@
   
 <script>
 import { days, dimensions } from '@/assets/data';
+import { addSchedule } from '@/functions';
 import { auth } from '../../firebase';
 
 export default {
   name: 'Sidebar',
   props: {
-    isHidden: Boolean
+    isHidden: Boolean,
+    user: Object,
+    existingSchedule: Object
   },
   data() {
     return {
@@ -102,6 +108,7 @@ export default {
       customWidth: null,
       customHeight: null,
       error: null,
+      loading: false,
       days: days,
       dimensions: dimensions,
       schedule: {
@@ -119,19 +126,13 @@ export default {
       }
     };
   },
-  created() {
-    this.selectedDays = this.schedule.settings.days;
-  },
-  watch: {
-    selectedDays(newSelectedDays) {
-      this.$emit('update:selectedDays', newSelectedDays);
-    }
-  },
   mounted() {
-    if (this.$route.params.id) {
-      this.scheduleId = this.$route.params.id;
-      //get schedule from db
+    if(this.existingSchedule){
+      this.schedule = this.existingSchedule;
+      console.log('existing')
     }
+
+    console.log(this.schedule, this.user, this.existingSchedule)
   },
   methods: {
     handleFileInputChange(event) {
@@ -163,26 +164,44 @@ export default {
         this.customHeight = null;
       }
     },
-    handleScheduleForm(){
+    async handleScheduleForm(){
       this.error = null;
-      console.log(this.schedule);
-      if(!this.schedule.name){
-        this.error = 'Please enter a schedule name';
-        return;
-      }
-      if(!this.schedule.settings.dimensions.name){
-        this.error = 'Please select a dimension';
-        return;
-      }
-      if(this.schedule.settings.dimensions.name === 'Custom' && (!this.customWidth || !this.customHeight)){
-        this.error = 'Please enter a custom width and height';
-        return;
-      }
-      if(this.scheduleId){
-        console.log('edit')
-      } else {
-        console.log('add')
-      }
+
+      console.log(this.schedule, this.user, this.existingSchedule)
+      // if(!this.schedule.name){
+      //   this.error = 'Please enter a schedule name';
+      //   return;
+      // }
+      // if(!this.schedule.settings.dimensions.name){
+      //   this.error = 'Please select a dimension';
+      //   return;
+      // }
+      // if(this.schedule.settings.dimensions.name === 'Custom' && (!this.customWidth || !this.customHeight)){
+      //   this.error = 'Please enter a custom width and height';
+      //   return;
+      // }
+      // if(this.schedule.settings.days.every(day => day === false)){
+      //   this.error = 'Please select at least one day';
+      //   return;
+      // }
+      // if(this.scheduleId){
+      //   console.log('edit')
+      //   console.log(this.schedule, this.user, this.existingSchedule)
+      // } else {
+      //   this.loading = true;
+      //   addSchedule(this.schedule, this.user)
+      //     .then((scheduleId) => {
+      //       if(scheduleId){
+      //         window.location.href = '/' + scheduleId;
+      //       }
+      //     })
+      //     .catch((err) => {
+      //       this.error = err;
+      //     })
+      //     .finally(() => {
+      //       this.loading = false;
+      //     });
+      // }
     },
     logout() {
       auth.signOut()

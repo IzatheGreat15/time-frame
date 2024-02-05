@@ -1,7 +1,7 @@
 <template>
     <div class="position-relative h-full w-full">
         <!-- Sidebar -->
-        <Sidebar v-if="user" :isHidden="sidebarHidden" :user="user" @toggleSidebar="toggleSidebar"/>
+        <Sidebar v-if="user" :isHidden="sidebarHidden" :existingSchedule="schedule" :user="user" @toggleSidebar="toggleSidebar"/>
 
         <!-- Main content -->
         <div class="position-absolute h-full w-full">
@@ -22,6 +22,7 @@
 import Sidebar from '../Sidebar.vue';
 import AddClass from '../AddClass.vue';
 import { getCurrentUser } from '@/router';
+import { getSchedule } from '@/functions';
 
 export default {
     name: 'Home',
@@ -33,14 +34,29 @@ export default {
         return {
             sidebarHidden: true,
             user: null,
+            schedule: null
         };
     },
     async mounted() {
-        this.user = await getCurrentUser();    
+        this.fetchUserData(); // Call the function to fetch user data
     },
     methods: {
+        async fetchUserData() {
+            try {
+                this.user = await getCurrentUser();    
+                if (this.$route.params.id) {
+                    this.scheduleId = this.$route.params.id;
+                    getSchedule(this.user.email, this.scheduleId).then((schedule) => {
+                        this.schedule = schedule;
+                    }) ;
+                }
+            } catch (error) {
+                console.error('Error fetching user or schedule:', error);
+            }
+        },
         toggleSidebar() {
             this.sidebarHidden = !this.sidebarHidden;
+            console.log(this.schedule)
         }
     }
 }
