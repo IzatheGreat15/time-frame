@@ -24,7 +24,7 @@ const routes = [
         component: () => import('@/components/pages/ResetPassword.vue'),
     },
     {
-        path: '/',
+        path: '/:id?',
         name: 'home',
         component: () => import('@/components/pages/Home.vue'),
         meta: {
@@ -38,7 +38,7 @@ const router = createRouter({
     routes
 });
 
-const getCurrentUser = () => {
+export const getCurrentUser = () => {
     return new Promise((resolve, reject) => {
         const removeListener = auth.onAuthStateChanged(user => {
             removeListener();

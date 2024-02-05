@@ -1,7 +1,7 @@
 <template>
     <div class="position-relative h-full w-full">
         <!-- Sidebar -->
-        <Sidebar :isHidden="sidebarHidden" @toggleSidebar="toggleSidebar"/>
+        <Sidebar v-if="user" :isHidden="sidebarHidden" :user="user" @toggleSidebar="toggleSidebar"/>
 
         <!-- Main content -->
         <div class="position-absolute h-full w-full">
@@ -21,7 +21,7 @@
 <script>
 import Sidebar from '../Sidebar.vue';
 import AddClass from '../AddClass.vue';
-import { auth } from '../../../firebase';
+import { getCurrentUser } from '@/router';
 
 export default {
     name: 'Home',
@@ -31,11 +31,12 @@ export default {
     },
     data() {
         return {
-            sidebarHidden: true
+            sidebarHidden: true,
+            user: null,
         };
     },
-    created() {
-        //    
+    async mounted() {
+        this.user = await getCurrentUser();    
     },
     methods: {
         toggleSidebar() {

@@ -10,18 +10,19 @@
             </svg>
           </div>
         </div>
-        <form action="" class="mt-3 text-white">
+        <form @submit.prevent="handleScheduleForm" class="mt-3 text-white">
             <div class="d-flex">
-                <input type="text" class="form-control mr-1" placeholder="Schedule Name" name="schedule_name" list="schedules"/>
+                <input type="text" class="form-control mr-1" v-model="schedule.name" placeholder="Schedule Name" name="schedule_name" list="schedules"/>
                 <datalist id="schedules">
                     <option value="1st Semester"></option>
                 </datalist>
 
-                <a href="#" class="btn btn-success mx-1">Add</a>
+                <a href="/" class="btn btn-success mx-1">Add</a>
                 <button class="btn btn-danger mx-1">Delete</button>
             </div>
 
             <h3 class="my-4">Settings</h3>
+            <p v-if="error" class="alert alert-danger">{{ error }}</p>
 
             <div class="form-group m-0 p-0 d-flex justify-content-between align-items-center">
                 <label for="background-image">Background Image</label>
@@ -36,7 +37,7 @@
             <div class="form-group p-0 d-flex justify-content-between align-items-center">
                 <label for="text-color">Text Color</label>
                 <div>
-                  <input type="color" class="d-none" id="text-color" @change="handleColorInputChange">
+                  <input type="color" class="d-none" v-model="schedule.settings.textColor" id="text-color" @change="handleColorInputChange">
                   <label for="text-color" class="color-preview">
                     <div class="color-box" :style="{ backgroundColor: selectedColor }"></div>
                   </label>
@@ -47,37 +48,37 @@
                 <label for="days-shown">Days Shown</label>
                 <div class="">
                     <div v-for="(day, index) in days" :key="index" class="form-check form-check-inline">
-                        <input class="form-check-input" :id="'day' + index" type="checkbox" :value="day.value">
+                        <input class="form-check-input" :id="'day' + index" type="checkbox" @change="handleDaysShown(index)" :value="day.value">
                         <label class="form-check-label" :for="'day' + index">{{ day.name }}</label>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="days-shown">Dimensions</label>
-                <div class="">
-                    <div v-for="(dim, index) in dimensions" :key="index" class="form-check my-1">
-                        <input class="form-check-input" type="radio" name="dimension" :id="dim.name" :value="dim.name">
-                        <label class="form-check-label" :id="dim.name">
-                            {{ dim.name }} ({{ dim.width }} x {{ dim.height }})
-                        </label>
-                    </div>
-                    <div class="form-check my-1">
-                        <input class="form-check-input" type="radio" name="dimension" id="" value="Custom">
-                        <div class="d-flex">
-                            <label class="form-check-label" for="">
-                                Custom:
-                            </label>
-                            <input type="text" class="form-control my-0 p-0 mx-3" placeholder="Width" name="width">
-                            x
-                            <input type="text" class="form-control my-0 p-0 mx-3" placeholder="Height" name="height">  
-                        </div>
-                    </div>
-
-                    <div class="my-3 text-right">
-                        <button class="btn btn-light">Save</button>
-                    </div>
+              <label for="days-shown">Dimensions</label>
+              <div class="">
+                <div v-for="(dim, index) in dimensions" :key="index" class="form-check my-1">
+                  <input class="form-check-input" type="radio" name="dimension" v-model="selectedDimension" @change="handleDimension(dim.width, dim.height)" :id="dim.name" :value="dim.name">
+                  <label class="form-check-label" :for="dim.name">
+                    {{ dim.name }} ({{ dim.width }} x {{ dim.height }})
+                  </label>
                 </div>
+                <div class="form-check my-1">
+                  <input class="form-check-input" type="radio" name="dimension" v-model="selectedDimension" @change="handleDimension(customWidth, customHeight)" id="Custom" value="Custom">
+                  <div class="d-flex">
+                    <label class="form-check-label" for="Custom">
+                      Custom:
+                    </label>
+                    <input type="number" class="form-control my-0 p-0 mx-3" v-model="customWidth" @change="handleDimension(customWidth, customHeight)" placeholder="Width" name="width">
+                    x
+                    <input type="number" class="form-control my-0 p-0 mx-3" v-model="customHeight" @change="handleDimension(customWidth, customHeight)" placeholder="Height" name="height">  
+                  </div>
+                </div>
+
+                <div class="my-3 text-right">
+                  <button class="btn btn-light" type="submit">Save</button>
+                </div>
+              </div>
             </div>
         </form>
     </div>
@@ -94,11 +95,43 @@ export default {
   },
   data() {
     return {
+      scheduleId: null,
       selectedImage: null,
       selectedColor: null,
+      selectedDimension: null,
+      customWidth: null,
+      customHeight: null,
+      error: null,
       days: days,
       dimensions: dimensions,
+      schedule: {
+        name: '',
+        settings: {
+          days: [false, false, false, false, false, false, false],
+          dimensions: {
+            name: '',
+            width: '',
+            height: ''
+          },
+          backgroundImage: '',
+          textColor: ''
+        },
+      }
     };
+  },
+  created() {
+    this.selectedDays = this.schedule.settings.days;
+  },
+  watch: {
+    selectedDays(newSelectedDays) {
+      this.$emit('update:selectedDays', newSelectedDays);
+    }
+  },
+  mounted() {
+    if (this.$route.params.id) {
+      this.scheduleId = this.$route.params.id;
+      //get schedule from db
+    }
   },
   methods: {
     handleFileInputChange(event) {
@@ -109,10 +142,47 @@ export default {
           this.selectedImage = e.target.result;
         };
         reader.readAsDataURL(file);
+
+        this.schedule.settings.backgroundImage = file;
       }
     },
     handleColorInputChange(event) {
       this.selectedColor = event.target.value;
+      this.schedule.settings.textColor = event.target.value;
+    },
+    handleDaysShown(index) {
+      this.schedule.settings.days[index] = !this.schedule.settings.days[index];
+    },
+    handleDimension(width, height) {
+      this.schedule.settings.dimensions.name = this.selectedDimension;
+      this.schedule.settings.dimensions.width = width;
+      this.schedule.settings.dimensions.height = height;
+
+      if(this.selectedDimension !== 'Custom') {
+        this.customWidth = null;
+        this.customHeight = null;
+      }
+    },
+    handleScheduleForm(){
+      this.error = null;
+      console.log(this.schedule);
+      if(!this.schedule.name){
+        this.error = 'Please enter a schedule name';
+        return;
+      }
+      if(!this.schedule.settings.dimensions.name){
+        this.error = 'Please select a dimension';
+        return;
+      }
+      if(this.schedule.settings.dimensions.name === 'Custom' && (!this.customWidth || !this.customHeight)){
+        this.error = 'Please enter a custom width and height';
+        return;
+      }
+      if(this.scheduleId){
+        console.log('edit')
+      } else {
+        console.log('add')
+      }
     },
     logout() {
       auth.signOut()
@@ -138,7 +208,7 @@ svg {
   cursor: pointer;
 }
 
-input[type="text"] {
+input[type="text"], input[type="number"] {
   background-color: transparent;
   border: 0;
   border-bottom: 1px solid #fff;
