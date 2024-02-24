@@ -12,10 +12,7 @@
         </div>
         <form @submit.prevent="handleScheduleForm" class="mt-3 text-white">
             <div class="d-flex">
-                <input type="text" class="form-control mr-1" v-model="schedule.name" placeholder="Schedule Name" name="schedule_name" list="schedules"/>
-                <datalist id="schedules">
-                    <option value="1st Semester"></option>
-                </datalist>
+                <vue-select id="select" :options="options" class="form-control" v-model="scheduleId" taggable></vue-select>
 
                 <a href="/" class="btn btn-success mx-1">Add</a>
                 <button class="btn btn-danger mx-1">Delete</button>
@@ -102,6 +99,7 @@ export default {
   data() {
     return {
       scheduleId: null,
+      options: ['Red', 'Green'],
       selectedImage: null,
       selectedColor: null,
       selectedDimension: null,
@@ -127,12 +125,15 @@ export default {
     };
   },
   mounted() {
-    if(this.existingSchedule){
-      this.schedule = this.existingSchedule;
-      console.log('existing')
-    }
-
-    console.log(this.schedule, this.user, this.existingSchedule)
+    // 
+  },
+  watch: {
+    scheduleId(newVal) {
+      // Check if the new value is in the options array
+      if (this.options.includes(newVal)) {
+        
+      }
+    },
   },
   methods: {
     handleFileInputChange(event) {
@@ -168,40 +169,6 @@ export default {
       this.error = null;
 
       console.log(this.schedule, this.user, this.existingSchedule)
-      // if(!this.schedule.name){
-      //   this.error = 'Please enter a schedule name';
-      //   return;
-      // }
-      // if(!this.schedule.settings.dimensions.name){
-      //   this.error = 'Please select a dimension';
-      //   return;
-      // }
-      // if(this.schedule.settings.dimensions.name === 'Custom' && (!this.customWidth || !this.customHeight)){
-      //   this.error = 'Please enter a custom width and height';
-      //   return;
-      // }
-      // if(this.schedule.settings.days.every(day => day === false)){
-      //   this.error = 'Please select at least one day';
-      //   return;
-      // }
-      // if(this.scheduleId){
-      //   console.log('edit')
-      //   console.log(this.schedule, this.user, this.existingSchedule)
-      // } else {
-      //   this.loading = true;
-      //   addSchedule(this.schedule, this.user)
-      //     .then((scheduleId) => {
-      //       if(scheduleId){
-      //         window.location.href = '/' + scheduleId;
-      //       }
-      //     })
-      //     .catch((err) => {
-      //       this.error = err;
-      //     })
-      //     .finally(() => {
-      //       this.loading = false;
-      //     });
-      // }
     },
     logout() {
       auth.signOut()
@@ -232,6 +199,10 @@ input[type="text"], input[type="number"] {
   border: 0;
   border-bottom: 1px solid #fff;
   color: #fff;
+}
+
+.vs__dropdown-toggle {
+  border: none !important;
 }
 
 ::-ms-input-placeholder {

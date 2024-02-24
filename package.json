@@ -11,7 +11,10 @@
   "dependencies": {
     "firebase": "^10.7.2",
     "vue": "^3.3.11",
+    "vue-next-select": "^2.10.5",
     "vue-router": "^4.2.5",
+    "vue-select": "^3.20.2",
+    "vue3-select": "^0.1.2",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

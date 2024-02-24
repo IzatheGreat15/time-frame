@@ -37,7 +37,7 @@ export default {
             schedule: null
         };
     },
-    async mounted() {
+    async created() {
         this.fetchUserData(); // Call the function to fetch user data
     },
     methods: {
@@ -46,8 +46,10 @@ export default {
                 this.user = await getCurrentUser();    
                 if (this.$route.params.id) {
                     this.scheduleId = this.$route.params.id;
+                    console.log(this.user)
                     getSchedule(this.user.email, this.scheduleId).then((schedule) => {
                         this.schedule = schedule;
+                        console.log(this.schedule)
                     }) ;
                 }
             } catch (error) {
