@@ -101,7 +101,6 @@ export const getUserSchedulesRealTime = async (userId, callback) => {
         const unsubscribe = onSnapshot(scheduleRef, (querySnapshot) => {
             const schedules = [];
             querySnapshot.forEach((doc) => {
-                console.log(doc.data())
                 // Push schedule data to the schedules array
                 schedules.push(doc.data());
             });

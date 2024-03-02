@@ -119,7 +119,7 @@ export default {
             height: ''
           },
           backgroundImage: '',
-          textColor: ''
+          textColor: '#ccc'
         },
       }
     };
@@ -150,7 +150,7 @@ export default {
               height: ''
             },
             backgroundImage: '',
-            textColor: ''
+            textColor: '#ccc'
           },
         };
       }
