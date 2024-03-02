@@ -132,6 +132,7 @@ export default {
   watch: {
     scheduleId(newVal) {
       // Check if the new value is in the options array
+      console.log(newVal, this.options)
       if (this.options.includes(newVal)) {
         // if the name already exists
         this.schedule = this.schedules.find(schedule => schedule.name === newVal);
@@ -153,7 +154,12 @@ export default {
             textColor: '#ccc'
           },
         };
+        this.selectedImage = null;
+        this.selectedColor = null;
+        this.selectedDimension = null;
       }
+
+      this.$emit('schedule-updated', this.schedule);
     },
   },
   methods: {
