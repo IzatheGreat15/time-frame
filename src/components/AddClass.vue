@@ -8,7 +8,7 @@
     <!-- Modal -->
     <div class="modal fade" id="addClassModal" tabindex="-1" role="dialog" aria-labelledby="addClassLabel" aria-hidden="false">
         <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+        <form @submit.prevent="checkValidation"  class="modal-content">
             <div class="modal-header">
             <h5 class="modal-title text-dark" id="addClassLabel">Add Class</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -16,39 +16,39 @@
             </button>
             </div>
             <div class="modal-body">
-                <form action="" class="text-dark">
+                <div class="text-dark">
                     <div class="form-group">
                         <label for="class-name" class="text-md">Class Name</label>
-                        <input type="text" class="form-control border-bottom" id="class-name" placeholder="Biology 101">
+                        <input type="text" v-model="classInfo.name" class="form-control border-bottom" id="class-name" placeholder="Biology 101">
                     </div>
                     <div class="form-group">
                         <label for="room" class="text-md">Room</label>
-                        <input type="text" class="form-control border-bottom" id="room" placeholder="Room 1423">
+                        <input type="text" v-model="classInfo.room" class="form-control border-bottom" id="room" placeholder="Room 1423">
                     </div>
                     <div class="form-group">
                         <label for="teacher" class="text-md">Teacher</label>
-                        <input type="text" class="form-control border-bottom" id="teacher" placeholder="Mr. Holmes">
+                        <input type="text" v-model="classInfo.teacher" class="form-control border-bottom" id="teacher" placeholder="Mr. Holmes">
                     </div>
                     <div class="form-group">
                         <label for="color" class="text-md">Color</label>
-                        <input type="color" class="form-control p-0 border-bottom" id="color" value="#000000">
+                        <input type="color" v-model="classInfo.color" class="form-control p-0 border-bottom" id="color" value="#000000">
                     </div>
                     <div class="form-group">
                         <label for="times" class="text-md">Times</label>
                         <div id="times-fields">
-                            <Time v-for="(time, index) in times" :key="index" @delete="deleteTime(index)" :time="time" />
+                            <Time v-for="(time, index) in classInfo.times" :key="index" @delete="deleteTime(index)" :time="time"></Time>
                         </div>
                     </div>
                     
                     <div class="text-center" @click="addTime" style="cursor: pointer">
                         <p>+ Add Time</p>
                     </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn bg-violet text-dark">Save changes</button>
+            <button type="submit" class="btn bg-violet text-dark">Save changes</button>
             </div>
-        </div>
+        </form>
         </div>
     </div>
 </template>
@@ -67,33 +67,39 @@ export default {
     },
     data(){
         return {
-            times: [
-                {
-                    day: '',
-                    start: {
-                        hour: '',
-                        minute: '',
-                        shift: ''
-                    },
-                    end: {
-                        hour: '',
-                        minute: '',
-                        shift: ''
+            classInfo: {
+                name: '',
+                room: '',
+                teacher: '',
+                color: '#000000',
+                times: [
+                    {
+                        day: '',
+                        start: {
+                            hour: '',
+                            minute: '',
+                            shift: ''
+                        },
+                        end: {
+                            hour: '',
+                            minute: '',
+                            shift: ''
+                        }
                     }
-                }
-            ]
+                ]
+            }
         }
     },
     mounted() {
-        $('#addClassModal').on('show.bs.modal', this.clearTimes);
+        $('#addClassModal').on('show.bs.modal', this.resetForm);
     },
     beforeDestroy() {
-        $('#addClassModal').off('show.bs.modal', this.clearTimes);
+        $('#addClassModal').off('show.bs.modal', this.resetForm);
     },
     methods: {
         addTime() {
             console.log(this.userId, this.scheduleId)
-            this.times.push({
+            this.classInfo.times.push({
                     day: '',
                     start: {
                         hour: '',
@@ -108,24 +114,37 @@ export default {
                 });
         },
         deleteTime(index) {
-            this.times.splice(index, 1);
+            this.classInfo.times.splice(index, 1);
         },
-        clearTimes() {
-            this.times = [
-                {
-                    day: '',
-                    start: {
-                        hour: '',
-                        minute: '',
-                        shift: ''
-                    },
-                    end: {
-                        hour: '',
-                        minute: '',
-                        shift: ''
+        resetForm() {
+            this.classInfo = {
+                name: '',
+                room: '',
+                teacher: '',
+                color: '#000000',
+                times: [
+                    {
+                        day: '',
+                        start: {
+                            hour: '',
+                            minute: '',
+                            shift: ''
+                        },
+                        end: {
+                            hour: '',
+                            minute: '',
+                            shift: ''
+                        }
                     }
-                }
-            ];
+                ]
+            };
+        },
+        checkValidation() {
+            let isValid = true;
+
+            console.log(this.classInfo);
+
+            return isValid;
         }
     }
 }
