@@ -25,14 +25,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Classes -->
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- Add Class Button -->
-        <AddClass />
+        <AddClass v-if="user && selectedSchedule.name" :userId="user.email" :scheduleId="selectedSchedule.name" />
     </div>
 </template>
   
@@ -65,7 +64,7 @@ export default {
                 backgroundImage: '',
                 textColor: '#ccc'
                 },
-            }
+            },
         };
     },
     async created() {
@@ -90,7 +89,21 @@ export default {
         },
         handleScheduleUpdate(updatedSchedule) {
             this.selectedSchedule = updatedSchedule;
-        }
+        },
+        getCellClass(cell) {
+      return {
+        'grid-cell': true,
+        'merged-cell': cell.rowspan && cell.rowspan > 1 // Apply merged-cell class if rowspan is specified
+      };
+    },
+    getCellStyle(cell) {
+      if (cell.rowspan && cell.rowspan > 1) {
+        return {
+          'grid-row-end': `span ${cell.rowspan}` // Set row span for merged cells
+        };
+      }
+      return {};
+    }
     },
     computed: {
         columnWidth() {
@@ -123,7 +136,7 @@ table {
     border-collapse: collapse;
     border-style: hidden;
 }
-th, td {
+th {
     border: 1px solid white;
 }
 </style>

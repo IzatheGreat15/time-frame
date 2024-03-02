@@ -7,7 +7,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="addClassModal" tabindex="-1" role="dialog" aria-labelledby="addClassLabel" aria-hidden="false">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
             <h5 class="modal-title text-dark" id="addClassLabel">Add Class</h5>
@@ -36,7 +36,7 @@
                     <div class="form-group">
                         <label for="times" class="text-md">Times</label>
                         <div id="times-fields">
-                            <Time v-for="(time, index) in times" :key="index" @delete="deleteTime(index)" />
+                            <Time v-for="(time, index) in times" :key="index" @delete="deleteTime(index)" :time="time" />
                         </div>
                     </div>
                     
@@ -61,18 +61,71 @@ export default {
     components: {
         Time
     },
+    props: {
+        userId: String,
+        scheduleId: String
+    },
     data(){
         return {
-            times: []
+            times: [
+                {
+                    day: '',
+                    start: {
+                        hour: '',
+                        minute: '',
+                        shift: ''
+                    },
+                    end: {
+                        hour: '',
+                        minute: '',
+                        shift: ''
+                    }
+                }
+            ]
         }
+    },
+    mounted() {
+        $('#addClassModal').on('show.bs.modal', this.clearTimes);
+    },
+    beforeDestroy() {
+        $('#addClassModal').off('show.bs.modal', this.clearTimes);
     },
     methods: {
         addTime() {
-            this.times.push({});
+            console.log(this.userId, this.scheduleId)
+            this.times.push({
+                    day: '',
+                    start: {
+                        hour: '',
+                        minute: '',
+                        shift: ''
+                    },
+                    end: {
+                        hour: '',
+                        minute: '',
+                        shift: ''
+                    }
+                });
         },
         deleteTime(index) {
-            console.log('here at ', index)
             this.times.splice(index, 1);
+        },
+        clearTimes() {
+            this.times = [
+                {
+                    day: '',
+                    start: {
+                        hour: '',
+                        minute: '',
+                        shift: ''
+                    },
+                    end: {
+                        hour: '',
+                        minute: '',
+                        shift: ''
+                    }
+                }
+            ];
         }
     }
 }
