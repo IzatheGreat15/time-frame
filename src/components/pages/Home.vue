@@ -1,7 +1,7 @@
 <template>
     <div class="position-relative h-full w-full">
         <!-- Sidebar -->
-        <Sidebar v-if="user" :isHidden="sidebarHidden" :existingSchedule="schedule" :user="user" @toggleSidebar="toggleSidebar"/>
+        <Sidebar v-if="user && schedules" :isHidden="sidebarHidden" :schedules="schedules" :user="user" @toggleSidebar="toggleSidebar"/>
 
         <!-- Main content -->
         <div class="position-absolute h-full w-full">
@@ -22,7 +22,7 @@
 import Sidebar from '../Sidebar.vue';
 import AddClass from '../AddClass.vue';
 import { getCurrentUser } from '@/router';
-import { getSchedule } from '@/functions';
+import { getUserSchedulesRealTime } from '@/functions';
 
 export default {
     name: 'Home',
@@ -34,7 +34,7 @@ export default {
         return {
             sidebarHidden: true,
             user: null,
-            schedule: null
+            schedules: null
         };
     },
     async created() {
@@ -44,13 +44,11 @@ export default {
         async fetchUserData() {
             try {
                 this.user = await getCurrentUser();    
-                if (this.$route.params.id) {
-                    this.scheduleId = this.$route.params.id;
-                    console.log(this.user)
-                    getSchedule(this.user.email, this.scheduleId).then((schedule) => {
-                        this.schedule = schedule;
-                        console.log(this.schedule)
-                    }) ;
+                if(this.user) {
+                    const unsubscribe = getUserSchedulesRealTime(this.user.email, (schedules) => {
+                        this.schedules = schedules;
+                    });
+                    
                 }
             } catch (error) {
                 console.error('Error fetching user or schedule:', error);
@@ -58,7 +56,6 @@ export default {
         },
         toggleSidebar() {
             this.sidebarHidden = !this.sidebarHidden;
-            console.log(this.schedule)
         }
     }
 }

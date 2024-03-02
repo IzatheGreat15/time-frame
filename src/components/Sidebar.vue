@@ -12,7 +12,7 @@
         </div>
         <form @submit.prevent="handleScheduleForm" class="mt-3 text-white">
             <div class="d-flex">
-                <vue-select id="select" :options="options" class="form-control" v-model="scheduleId" taggable></vue-select>
+                <vue-select id="select" :options="options" class="form-control p-0" v-model="scheduleId" taggable></vue-select>
 
                 <a href="/" class="btn btn-success mx-1">Add</a>
                 <button class="btn btn-danger mx-1">Delete</button>
@@ -45,7 +45,7 @@
                 <label for="days-shown">Days Shown</label>
                 <div class="">
                     <div v-for="(day, index) in days" :key="index" class="form-check form-check-inline">
-                        <input class="form-check-input" :id="'day' + index" type="checkbox" @change="handleDaysShown(index)" :value="day.value">
+                        <input class="form-check-input" :id="'day' + index" type="checkbox" @change="handleDaysShown(index)" :value="day.value" :checked="this.schedule.settings.days[index] > 0 ? true : false">
                         <label class="form-check-label" :for="'day' + index">{{ day.name }}</label>
                     </div>
                 </div>
@@ -94,12 +94,12 @@ export default {
   props: {
     isHidden: Boolean,
     user: Object,
-    existingSchedule: Object
+    schedules: Array
   },
   data() {
     return {
       scheduleId: null,
-      options: ['Red', 'Green'],
+      options: this.schedules ? this.schedules.map(schedule => schedule.name) : [],
       selectedImage: null,
       selectedColor: null,
       selectedDimension: null,
@@ -124,14 +124,35 @@ export default {
       }
     };
   },
-  mounted() {
-    // 
+  computed: {
+    options() {
+      return this.schedules ? this.schedules.map(schedule => schedule.name) : [];
+    }
   },
   watch: {
     scheduleId(newVal) {
       // Check if the new value is in the options array
       if (this.options.includes(newVal)) {
-        
+        // if the name already exists
+        this.schedule = this.schedules.find(schedule => schedule.name === newVal);
+        this.selectedImage = this.schedule.settings.backgroundImage;
+        this.selectedColor = this.schedule.settings.textColor;
+        this.selectedDimension = this.schedule.settings.dimensions.name;
+      }else{
+        // if the name does not exist, create a new one
+        this.schedule = {
+          name: newVal,
+          settings: {
+            days: [false, false, false, false, false, false, false],
+            dimensions: {
+              name: '',
+              width: '',
+              height: ''
+            },
+            backgroundImage: '',
+            textColor: ''
+          },
+        };
       }
     },
   },
@@ -167,8 +188,15 @@ export default {
     },
     async handleScheduleForm(){
       this.error = null;
-
-      console.log(this.schedule, this.user, this.existingSchedule)
+// console.log(this.schedule, typeof this.schedule.settings.backgroundImage)
+      try {
+        this.loading = true;
+        await addSchedule(this.schedule, this.user);
+        this.loading = false;
+      } catch (error) {
+        this.error = error.message;
+        this.loading = false;
+      }
     },
     logout() {
       auth.signOut()
@@ -221,8 +249,9 @@ input[type="text"], input[type="number"] {
 }
 
 .image-preview img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .color-preview {
