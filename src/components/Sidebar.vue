@@ -94,7 +94,8 @@ export default {
   props: {
     isHidden: Boolean,
     user: Object,
-    schedules: Array
+    schedules: Array,
+    schedule: Object,
   },
   data() {
     return {
@@ -109,19 +110,6 @@ export default {
       loading: false,
       days: days,
       dimensions: dimensions,
-      schedule: {
-        name: '',
-        settings: {
-          days: [false, false, false, false, false, false, false],
-          dimensions: {
-            name: '',
-            width: '',
-            height: ''
-          },
-          backgroundImage: '',
-          textColor: '#ccc'
-        },
-      }
     };
   },
   computed: {
@@ -132,19 +120,19 @@ export default {
   watch: {
     scheduleId(newVal) {
       // Check if the new value is in the options array
-      console.log(newVal, this.options)
       if (this.options.includes(newVal)) {
         // if the name already exists
-        this.schedule = this.schedules.find(schedule => schedule.name === newVal);
-        this.selectedImage = this.schedule.settings.backgroundImage;
-        this.selectedColor = this.schedule.settings.textColor;
-        this.selectedDimension = this.schedule.settings.dimensions.name;
+        var tempSchedule = this.schedules.find(schedule => schedule.name === newVal);
+        this.$emit('schedule-updated', tempSchedule);
+        this.selectedImage = tempSchedule.settings.backgroundImage;
+        this.selectedColor = tempSchedule.settings.textColor;
+        this.selectedDimension = tempSchedule.settings.dimensions.name;
       }else{
         // if the name does not exist, create a new one
-        this.schedule = {
+        this.$emit('schedule-updated', {
           name: newVal,
           settings: {
-            days: [false, false, false, false, false, false, false],
+            days: [true, true, true, true, true, true, true],
             dimensions: {
               name: '',
               width: '',
@@ -153,13 +141,11 @@ export default {
             backgroundImage: '',
             textColor: '#ccc'
           },
-        };
+        });
         this.selectedImage = null;
         this.selectedColor = null;
         this.selectedDimension = null;
       }
-
-      this.$emit('schedule-updated', this.schedule);
     },
   },
   methods: {
