@@ -11,23 +11,7 @@
                 </svg>
             </div>
             <!-- Main content goes here -->
-            <div class="table-container">
-                <table class="w-full">
-                    <thead>
-                        <tr class="text-center">
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[0]">Sun</th>
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[1]">Mon</th>
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[2]">Tue</th>
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[3]">Wed</th>
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[4]">Thu</th>
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[5]">Fri</th>
-                            <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[6]">Sat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+            <Classes :selectedSchedule="selectedSchedule"/>
         </div>
 
         <!-- Add Class Button -->
@@ -40,12 +24,14 @@ import Sidebar from '../Sidebar.vue';
 import AddClass from '../AddClass.vue';
 import { getCurrentUser } from '@/router';
 import { getUserSchedulesRealTime } from '@/functions';
+import Classes from '../Classes.vue';
 
 export default {
     name: 'Home',
     components: {
         Sidebar,
-        AddClass
+        AddClass,
+        Classes
     },
     data() {
         return {
@@ -90,26 +76,6 @@ export default {
         handleScheduleUpdate(updatedSchedule) {
             this.selectedSchedule = updatedSchedule;
         },
-        getCellClass(cell) {
-      return {
-        'grid-cell': true,
-        'merged-cell': cell.rowspan && cell.rowspan > 1 // Apply merged-cell class if rowspan is specified
-      };
-    },
-    getCellStyle(cell) {
-      if (cell.rowspan && cell.rowspan > 1) {
-        return {
-          'grid-row-end': `span ${cell.rowspan}` // Set row span for merged cells
-        };
-      }
-      return {};
-    }
-    },
-    computed: {
-        columnWidth() {
-            const selectedDays = this.selectedSchedule.settings.days.filter(day => day === true).length;
-            return selectedDays > 0 ? `${100 / selectedDays}%` : '0%';
-        }
     }
 }
 </script>
@@ -123,20 +89,5 @@ svg {
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-}
-
-.table-container {
-    flex: 1;
-    overflow-y: auto;
-}
-
-table {
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-    border-style: hidden;
-}
-th {
-    border: 1px solid white;
 }
 </style>
