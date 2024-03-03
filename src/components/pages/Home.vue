@@ -31,7 +31,7 @@
         </div>
 
         <!-- Add Class Button -->
-        <AddClass v-if="user && selectedSchedule.name" :userId="user.email" :scheduleId="selectedSchedule.name" />
+        <AddClass v-if="user && selectedSchedule.name" :userId="user.email" :scheduleId="selectedSchedule.name" :selectedDays="selectedSchedule.settings.days" />
     </div>
 </template>
   

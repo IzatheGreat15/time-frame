@@ -8,7 +8,7 @@
     <!-- Modal -->
     <div class="modal fade" id="addClassModal" tabindex="-1" role="dialog" aria-labelledby="addClassLabel" aria-hidden="false">
         <div class="modal-dialog modal-lg" role="document">
-        <form @submit.prevent="checkValidation"  class="modal-content">
+        <form @submit.prevent="addClassSubmit"  class="modal-content">
             <div class="modal-header">
             <h5 class="modal-title text-dark" id="addClassLabel">Add Class</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -31,12 +31,12 @@
                     </div>
                     <div class="form-group">
                         <label for="color" class="text-md">Color</label>
-                        <input type="color" v-model="classInfo.color" class="form-control p-0 border-bottom" id="color" value="#000000">
+                        <input type="color" v-model="classInfo.color" class="form-control form-control-color p-0 border-bottom" id="color" value="#000000">
                     </div>
                     <div class="form-group">
                         <label for="times" class="text-md">Times</label>
                         <div id="times-fields">
-                            <Time v-for="(time, index) in classInfo.times" :key="index" @delete="deleteTime(index)" :time="time"></Time>
+                            <Time v-for="(time, index) in classInfo.times" :key="index" @delete="deleteTime(index)" :time="time" :selectedDays="selectedDays"></Time>
                         </div>
                     </div>
                     
@@ -63,7 +63,8 @@ export default {
     },
     props: {
         userId: String,
-        scheduleId: String
+        scheduleId: String,
+        selectedDays: Array
     },
     data(){
         return {
@@ -139,10 +140,91 @@ export default {
                 ]
             };
         },
+        addClassSubmit() {
+            if(this.checkValidation()) {
+                
+            }
+
+            return;
+        },
         checkValidation() {
             let isValid = true;
 
             console.log(this.classInfo);
+
+            const elements = document.querySelectorAll('.border-danger, .is-invalid, .text-danger');
+            elements.forEach(element => {
+                if (element.tagName !== 'svg') {
+                    element.classList.remove('border-danger', 'is-invalid', 'text-danger');
+            }
+            });
+
+            if(this.classInfo.name === '') {
+                document.getElementById('class-name').classList.add('border-danger', 'is-invalid');
+                document.querySelector('label[for="class-name"]').classList.add('text-danger');
+                
+                isValid = false;
+            }
+
+            if(this.classInfo.room === '') {
+                document.getElementById('room').classList.add('border-danger', 'is-invalid');
+                document.querySelector('label[for="room"]').classList.add('text-danger');
+                
+                isValid = false;
+            }
+
+            if(this.classInfo.teacher === '') {
+                document.getElementById('teacher').classList.add('border-danger', 'is-invalid');
+                document.querySelector('label[for="teacher"]').classList.add('text-danger');
+                
+                isValid = false;
+            }
+
+            const timeComponents = document.querySelectorAll('#times-fields .row.form-group');
+            timeComponents.forEach((timeComponent, index) => {
+                const daySelect = timeComponent.querySelector('select[name="day"]');
+                const startHourSelect = timeComponent.querySelector('select[name="start-hour"]');
+                const startMinuteSelect = timeComponent.querySelector('select[name="start-minute"]');
+                const startShiftSelect = timeComponent.querySelector('select[name="start-shift"]');
+                const endHourSelect = timeComponent.querySelector('select[name="end-hour"]');
+                const endMinuteSelect = timeComponent.querySelector('select[name="end-minute"]');
+                const endShiftSelect = timeComponent.querySelector('select[name="end-shift"]');
+
+                if(daySelect.value === '') {
+                    daySelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                if(startHourSelect.value === '') {
+                    startHourSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                if(startMinuteSelect.value === '') {
+                    startMinuteSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                if(startShiftSelect.value === '') {
+                    startShiftSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                if(endHourSelect.value === '') {
+                    endHourSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                if(endMinuteSelect.value === '') {
+                    endMinuteSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                if(endShiftSelect.value === '') {
+                    endShiftSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+            });
 
             return isValid;
         }

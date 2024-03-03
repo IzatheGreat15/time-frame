@@ -3,19 +3,19 @@
         <div class="col-sm-12 col-md-3 my-1">
             <label for="day" class="text-md">Day</label>
             <select name="day" v-model="time.day" class="form-control border-bottom" id="day">
-                <option v-for="(day, index) in days" :key="index" :value="day.value">{{ day.name }}</option>
+                <option v-for="(day, index) in days.filter((day, index) => selectedDays[index])" :key="index" :value="day.value">{{ day.name }}</option>
             </select>
         </div>
         <div class="col-sm-12 col-md-4 my-1">
             <label for="start-time" class="text-md">Start Time</label>
             <div class="d-flex" style="margin: auto; gap: 8px;">
-                <select name="start-hour" v-model="time.start.hour" id="start-hour" class="form-control">
+                <select name="start-hour" v-model="time.start.hour" id="start-hour" class="form-control p-1">
                     <option v-for="hour in 12" :key="hour" :value="hour">{{ hour }}</option>
                 </select>
-                <select name="start-minute" v-model="time.start.minute"  id="start-minute" class="form-control">
+                <select name="start-minute" v-model="time.start.minute"  id="start-minute" class="form-control p-1">
                     <option v-for="minute in 12" :key="minute" :value="(minute - 1) * 5">{{ ((minute - 1) * 5 < 10 ? '0' : '') + (minute - 1) * 5 }}</option>
                 </select>
-                <select name="start-shift" v-model="time.start.shift"  id="start-shift" class="form-control">
+                <select name="start-shift" v-model="time.start.shift"  id="start-shift" class="form-control p-1">
                     <option value="AM">AM</option>
                     <option value="PM">PM</option>
                 </select>
@@ -24,13 +24,13 @@
         <div class="col-sm-12 col-md-4 my-1">
             <label for="end-time" class="text-md">End Time</label>
             <div class="d-flex" style="margin: auto; gap: 8px;">
-                <select name="end-hour" v-model="time.end.hour"  id="end-hour" class="form-control">
+                <select name="end-hour" v-model="time.end.hour"  id="end-hour" class="form-control p-1">
                     <option v-for="hour in 12" :key="hour" :value="hour">{{ hour }}</option>
                 </select>
-                <select name="end-minute" v-model="time.end.minute"  id="end-minute" class="form-control">
+                <select name="end-minute" v-model="time.end.minute"  id="end-minute" class="form-control p-1">
                     <option v-for="minute in 12" :key="minute" :value="(minute - 1) * 5">{{ ((minute - 1) * 5 < 10 ? '0' : '') + (minute - 1) * 5 }}</option>
                 </select>
-                <select name="end-shift" v-model="time.end.shift"  id="end-shift" class="form-control">
+                <select name="end-shift" v-model="time.end.shift"  id="end-shift" class="form-control p-1">
                     <option value="AM">AM</option>
                     <option value="PM">PM</option>
                 </select>
@@ -51,7 +51,7 @@ export default {
     name: 'Time',
     props: {
         time: Object,
-        required: true
+        selectedDays: Array
     },
     mounted() {
         console.log('time', this.time);
