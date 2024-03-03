@@ -57,7 +57,9 @@ export default {
                     error.value = null;
                     createUserWithEmailAndPassword(auth, user.email.value, user.password.value)
                         .then((data) => {
-                            setDoc(doc(db, "users", user.email.value), {})
+                            setDoc(doc(db, "users", user.email.value), {
+                                email: user.email.value
+                            })
                             .then(() => {
                                 router.push('/');
                             })
