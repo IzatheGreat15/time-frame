@@ -12,7 +12,7 @@
         </div>
         <form @submit.prevent="handleScheduleForm" class="mt-3 text-white">
             <div class="d-flex">
-                <button class="btn btn-success mx-1" type="button" data-toggle="modal" data-target="#addScheduleModal">Add</button>
+                <!-- <button class="btn btn-success mx-1" type="button" data-toggle="modal" data-target="#addScheduleModal">Add</button> -->
                 <vue-select id="select" :options="options" class="form-control p-0" v-model="scheduleId"></vue-select>
                 <button class="btn btn-danger mx-1" type="button">Delete</button>
             </div>
@@ -82,7 +82,7 @@
                   <div v-if="loading" class="spinner-border spinner-border-sm text-light mr-2" role="status">
                     <span class="sr-only">Loading...</span>
                   </div>
-                  <button class="btn btn-light" type="submit">Save</button>
+                  <button class="btn btn-success" id="submit-btn" type="submit">Add</button>
                 </div>
               </div>
             </div>
@@ -112,10 +112,10 @@ export default {
   data() {
     return {
       scheduleId: null,
-      options: this.schedules ? this.schedules.map(schedule => schedule.name) : [],
+      options: this.schedules ? this.schedules.map(schedule => ({ value: schedule.id, label: schedule.name })) : [],
       selectedImage: null,
-      selectedColor: null,
-      selectedDimension: null,
+      selectedColor: '#ccc',
+      selectedDimension: 'Current Device',
       customWidth: null,
       customHeight: null,
       error: null,
@@ -126,29 +126,36 @@ export default {
   },
   computed: {
     options() {
-      return this.schedules ? this.schedules.map(schedule => schedule.name) : [];
+      return this.schedules ? this.schedules.map(schedule => ({ value: schedule.id, label: schedule.name })) : [];
     }
   },
   watch: {
     scheduleId(newVal) {
+      const submitBtn = document.getElementById('submit-btn');
+      
       // Check if the new value is in the options array
-      if (this.options.includes(newVal)) {
+      if (newVal && this.options.some(option => option.value === newVal.value)) {
         // if the name already exists
-        var tempSchedule = this.schedules.find(schedule => schedule.name === newVal);
+        var tempSchedule = this.schedules.find(schedule => schedule.id === newVal.value);
         this.$emit('schedule-updated', tempSchedule);
         this.selectedImage = tempSchedule.settings.backgroundImage;
         this.selectedColor = tempSchedule.settings.textColor;
         this.selectedDimension = tempSchedule.settings.dimensions.name;
+        
+        submitBtn.textContent = 'Save';
+        submitBtn.classList.remove('btn-success');
+        submitBtn.classList.add('btn-light');
       }else{
         // if the name does not exist, create a new one
         this.$emit('schedule-updated', {
-          name: newVal,
+          name: '',
+          id: null,
           settings: {
             days: [true, true, true, true, true, true, true],
             dimensions: {
-              name: '',
-              width: '',
-              height: ''
+              name: 'Current Device',
+              width: '100%',
+              height: '100%'
             },
             backgroundImage: '',
             textColor: '#ccc'
@@ -156,7 +163,11 @@ export default {
         });
         this.selectedImage = null;
         this.selectedColor = null;
-        this.selectedDimension = null;
+        this.selectedDimension = 'Current Device';
+
+        submitBtn.textContent = 'Add';
+        submitBtn.classList.remove('btn-light');
+        submitBtn.classList.add('btn-success');
       }
     },
   },
@@ -167,15 +178,19 @@ export default {
         const reader = new FileReader();
         reader.onload = (e) => {
           this.selectedImage = e.target.result;
+          this.schedule.settings.selectedImage = this.selectedImage;
         };
         reader.readAsDataURL(file);
 
         this.schedule.settings.backgroundImage = file;
+       
+        this.$emit('schedule-updated', this.schedule);
       }
     },
     handleColorInputChange(event) {
       this.selectedColor = event.target.value;
       this.schedule.settings.textColor = event.target.value;
+      this.$emit('schedule-updated', this.schedule);
     },
     handleDaysShown(index) {
       this.schedule.settings.days[index] = !this.schedule.settings.days[index];
@@ -189,10 +204,12 @@ export default {
         this.customWidth = null;
         this.customHeight = null;
       }
+
+      this.$emit('schedule-updated', this.schedule);
     },
     async handleScheduleForm(){
       this.error = null;
-// console.log(this.schedule, typeof this.schedule.settings.backgroundImage)
+
       try {
         this.loading = true;
         await addSchedule(this.schedule, this.user);

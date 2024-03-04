@@ -67,8 +67,9 @@ export const addSchedule = async (schedule, user) => {
 
     const userRef = doc(db, 'users', user.email);
     const scheduleRef = collection(userRef, 'schedules');
+    const newDocRef = schedule.id ? doc(scheduleRef, schedule.id) : doc(scheduleRef);
 
-    await setDoc(doc(scheduleRef, newSchedule.name), newSchedule);
+    await setDoc(newDocRef, newSchedule);
 
     return newSchedule.name;
 }
@@ -102,7 +103,7 @@ export const getUserSchedulesRealTime = async (userId, callback) => {
             const schedules = [];
             querySnapshot.forEach((doc) => {
                 // Push schedule data to the schedules array
-                schedules.push(doc.data());
+                schedules.push({ id: doc.id, ...doc.data() });
             });
             // Pass the schedules array to the callback function
             callback(schedules);
