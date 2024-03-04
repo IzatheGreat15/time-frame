@@ -17,7 +17,7 @@
         </div>
 
         <!-- Add Class Button -->
-        <AddClass v-if="user && selectedSchedule.name" :userId="user.email" :scheduleId="selectedSchedule.name" :selectedDays="selectedSchedule.settings.days" />
+        <AddClass v-if="user && selectedSchedule.id" :userId="user.email" :scheduleId="selectedSchedule.id" :selectedDays="selectedSchedule.settings.days" />
     </div>
 </template>
   
@@ -66,7 +66,6 @@ export default {
                 if(this.user) {
                     const unsubscribe = getUserSchedulesRealTime(this.user.email, (schedules) => {
                         this.schedules = schedules;
-                        console.log(this.schedules);
                     });
                     
                 }

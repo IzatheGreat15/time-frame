@@ -88,27 +88,22 @@
             </div>
         </form>
     </div>
-
-    <AddSchedule v-if="user && schedules" :user="user" :schedules="options"/>
 </template>
   
 <script>
 import { days, dimensions } from '@/assets/data';
 import { addSchedule } from '@/functions';
 import { auth } from '../../firebase';
-import AddSchedule from './AddSchedule.vue';
 
 export default {
   name: 'Sidebar',
-  components: {
-    AddSchedule
-  },
   props: {
     isHidden: Boolean,
     user: Object,
     schedules: Array,
     schedule: Object,
   },
+  emits: ['toggleSidebar', 'scheduleUpdated'],
   data() {
     return {
       scheduleId: null,
@@ -137,7 +132,7 @@ export default {
       if (newVal && this.options.some(option => option.value === newVal.value)) {
         // if the name already exists
         var tempSchedule = this.schedules.find(schedule => schedule.id === newVal.value);
-        this.$emit('schedule-updated', tempSchedule);
+        this.$emit('scheduleUpdated', tempSchedule);
         this.selectedImage = tempSchedule.settings.backgroundImage;
         this.selectedColor = tempSchedule.settings.textColor;
         this.selectedDimension = tempSchedule.settings.dimensions.name;
@@ -147,7 +142,7 @@ export default {
         submitBtn.classList.add('btn-light');
       }else{
         // if the name does not exist, create a new one
-        this.$emit('schedule-updated', {
+        this.$emit('scheduleUpdated', {
           name: '',
           id: null,
           settings: {
@@ -184,13 +179,13 @@ export default {
 
         this.schedule.settings.backgroundImage = file;
        
-        this.$emit('schedule-updated', this.schedule);
+        this.$emit('scheduleUpdated', this.schedule);
       }
     },
     handleColorInputChange(event) {
       this.selectedColor = event.target.value;
       this.schedule.settings.textColor = event.target.value;
-      this.$emit('schedule-updated', this.schedule);
+      this.$emit('scheduleUpdated', this.schedule);
     },
     handleDaysShown(index) {
       this.schedule.settings.days[index] = !this.schedule.settings.days[index];
@@ -205,7 +200,7 @@ export default {
         this.customHeight = null;
       }
 
-      this.$emit('schedule-updated', this.schedule);
+      this.$emit('scheduleUpdated', this.schedule);
     },
     async handleScheduleForm(){
       this.error = null;

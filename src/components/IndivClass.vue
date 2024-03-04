@@ -13,7 +13,7 @@
 export default {
     name: 'IndivClass',
     props: {
-      classInfo: Object || Number,
+      classInfo: [Object, Number],
       increment: Number
     },
     methods: {
