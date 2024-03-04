@@ -99,7 +99,6 @@ export default {
     },
     methods: {
         addTime() {
-            console.log(this.userId, this.scheduleId)
             this.classInfo.times.push({
                     day: '',
                     start: {
@@ -118,6 +117,13 @@ export default {
             this.classInfo.times.splice(index, 1);
         },
         resetForm() {
+            const elements = document.querySelectorAll('.border-danger, .is-invalid, .text-danger');
+            elements.forEach(element => {
+                if (element.tagName !== 'svg') {
+                    element.classList.remove('border-danger', 'is-invalid', 'text-danger');
+                }   
+            });
+
             this.classInfo = {
                 name: '',
                 room: '',
@@ -142,7 +148,7 @@ export default {
         },
         addClassSubmit() {
             if(this.checkValidation()) {
-                
+                   
             }
 
             return;

@@ -12,14 +12,20 @@
         </div>
         <form @submit.prevent="handleScheduleForm" class="mt-3 text-white">
             <div class="d-flex">
-                <vue-select id="select" :options="options" class="form-control p-0" v-model="scheduleId" taggable></vue-select>
-
-                <a href="/" class="btn btn-success mx-1">Add</a>
-                <button class="btn btn-danger mx-1">Delete</button>
+                <button class="btn btn-success mx-1" type="button" data-toggle="modal" data-target="#addScheduleModal">Add</button>
+                <vue-select id="select" :options="options" class="form-control p-0" v-model="scheduleId"></vue-select>
+                <button class="btn btn-danger mx-1" type="button">Delete</button>
             </div>
 
             <h3 class="my-4">Settings</h3>
             <p v-if="error" class="alert alert-danger">{{ error }}</p>
+
+            <div class="form-group p-0 d-flex justify-content-between align-items-center">
+              <label for="schedule-name">Name</label>
+              <div>
+                <input type="text" class="form-control border-bottom" v-model="schedule.name" id="schedule-name">
+              </div>
+            </div>
 
             <div class="form-group m-0 p-0 d-flex justify-content-between align-items-center">
                 <label for="background-image">Background Image</label>
@@ -82,15 +88,21 @@
             </div>
         </form>
     </div>
+
+    <AddSchedule v-if="user && schedules" :user="user" :schedules="options"/>
 </template>
   
 <script>
 import { days, dimensions } from '@/assets/data';
 import { addSchedule } from '@/functions';
 import { auth } from '../../firebase';
+import AddSchedule from './AddSchedule.vue';
 
 export default {
   name: 'Sidebar',
+  components: {
+    AddSchedule
+  },
   props: {
     isHidden: Boolean,
     user: Object,

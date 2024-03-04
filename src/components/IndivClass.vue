@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { parse } from 'vue/compiler-sfc';
-
 export default {
     name: 'IndivClass',
     props: {

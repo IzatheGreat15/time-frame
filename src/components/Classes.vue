@@ -51,7 +51,7 @@ export default {
                 {
                     name: 'Class 2',
                     startTime: '1030',
-                    endTime: '1130',
+                    endTime: '1730',
                     day: '0',
                     color: 'bg-dark'
                 },
