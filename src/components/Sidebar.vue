@@ -18,7 +18,7 @@
             </div>
 
             <h3 class="my-4">Settings</h3>
-            <p v-if="error" class="alert alert-danger">{{ error }}</p>
+            <p v-if="error" class="text-danger m-0">{{ error }}</p>
 
             <div class="form-group p-0 d-flex justify-content-between align-items-center">
               <label for="schedule-name">Name</label>
@@ -204,6 +204,34 @@ export default {
     },
     async handleScheduleForm(){
       this.error = null;
+
+      const elements = document.querySelectorAll('.border-danger, .is-invalid, .text-danger');
+      elements.forEach(element => {
+        if (element.tagName !== 'svg') {
+          element.classList.remove('border-danger', 'is-invalid', 'text-danger');
+        }   
+      });
+
+      if(this.schedule.name === '') {
+        this.error = 'Name is required';
+        return;
+      }
+
+      if(this.schedule.settings.textColor === '') {
+        this.error = 'Text Color is required';
+        return;
+      }
+
+      if(this.schedule.settings.dimensions.width === '' || this.schedule.settings.dimensions.height === '') {
+        this.error = 'Dimensions are required';
+        return;
+      }
+
+      if(this.schedules.some(option => option.name === this.schedule.name)){
+        this.error = 'Name already exists';
+        document.getElementById('schedule-name').classList.add('border-danger');
+        return;
+      }
 
       try {
         this.loading = true;
