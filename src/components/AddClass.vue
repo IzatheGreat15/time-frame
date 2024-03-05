@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-            <button type="submit" class="btn bg-violet text-dark">Save changes</button>
+            <button type="submit" class="btn bg-violet text-dark" id="save-class-btn">Save changes</button>
             </div>
         </form>
         </div>
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { addClass } from '@/functions';
 import Time from './Time.vue';
 
 export default {
@@ -69,6 +70,7 @@ export default {
     data(){
         return {
             classInfo: {
+                id: null,
                 name: '',
                 room: '',
                 teacher: '',
@@ -146,17 +148,23 @@ export default {
                 ]
             };
         },
-        addClassSubmit() {
+        async addClassSubmit() {
             if(this.checkValidation()) {
-                   
+                document.getElementById('save-class-btn').disabled = true;
+                try{
+                    await addClass(this.scheduleId, this.userId, this.classInfo);
+                    $('#addClassModal').modal('hide');
+                    document.getElementById('save-class-btn').disabled = false;
+                } catch (error) {
+                    console.error('Error adding class:', error);
+                    document.getElementById('save-class-btn').disabled = false;
+                }
             }
 
             return;
         },
         checkValidation() {
             let isValid = true;
-
-            console.log(this.classInfo);
 
             const elements = document.querySelectorAll('.border-danger, .is-invalid, .text-danger');
             elements.forEach(element => {
@@ -227,6 +235,37 @@ export default {
                 }
 
                 if(endShiftSelect.value === '') {
+                    endShiftSelect.classList.add('border-danger', 'is-invalid');
+                    isValid = false;
+                }
+
+                const startHour = parseInt(startHourSelect.value);
+                const startMinute = parseInt(startMinuteSelect.value);
+                const startShift = startShiftSelect.value;
+
+                const endHour = parseInt(endHourSelect.value);
+                const endMinute = parseInt(endMinuteSelect.value);
+                const endShift = endShiftSelect.value;
+
+                // Convert to 24-hour format
+                let startHour24 = startHour;
+                let endHour24 = endHour;
+
+                if (startShift === 'PM' && startHour !== 12) {
+                    startHour24 += 12;
+                }
+
+                if (endShift === 'PM' && endHour !== 12) {
+                    endHour24 += 12;
+                }
+
+                // Convert to minutes for easy comparison
+                const startTimeInMinutes = startHour24 * 60 + startMinute;
+                const endTimeInMinutes = endHour24 * 60 + endMinute;
+
+                if (endTimeInMinutes <= startTimeInMinutes) {
+                    endHourSelect.classList.add('border-danger', 'is-invalid');
+                    endMinuteSelect.classList.add('border-danger', 'is-invalid');
                     endShiftSelect.classList.add('border-danger', 'is-invalid');
                     isValid = false;
                 }

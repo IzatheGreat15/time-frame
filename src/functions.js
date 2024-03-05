@@ -74,6 +74,17 @@ export const addSchedule = async (schedule, user) => {
     return newSchedule.name;
 }
 
+export const addClass = async (schedule, user, newClass) => {
+    const userRef = doc(db, 'users', user);
+    const scheduleRef = doc(userRef, 'schedules', schedule);
+    const classesCollectionRef = collection(scheduleRef, 'classes');
+    const classRef = newClass.id ? doc(classesCollectionRef, newClass.id) : doc(classesCollectionRef);
+
+    await setDoc(classRef, newClass);
+
+    return newClass.id;
+}
+
 export const getSchedule = async (userId, scheduleId) => {
     try {
         const userRef = doc(db, 'users', userId);
