@@ -227,7 +227,7 @@ export default {
         return;
       }
 
-      if(this.schedules.some(option => option.name === this.schedule.name)){
+      if(this.schedules.some(option => option.name === this.schedule.name && option.id !== this.schedule.id)){
         this.error = 'Name already exists';
         document.getElementById('schedule-name').classList.add('border-danger');
         return;
