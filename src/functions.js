@@ -2,6 +2,17 @@ import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase
 import { db, storage } from "../firebase";
 import { collection, doc, getDoc, getDocs, onSnapshot, setDoc } from "firebase/firestore";
 
+function generateRandomId(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return result;
+}
+
 export const uploadFile = (file, filepath) => {
     if(file === ''){
         return null;
@@ -77,10 +88,21 @@ export const addSchedule = async (schedule, user) => {
 export const addClass = async (schedule, user, newClass) => {
     const userRef = doc(db, 'users', user);
     const scheduleRef = doc(userRef, 'schedules', schedule);
-    const classesCollectionRef = collection(scheduleRef, 'classes');
-    const classRef = newClass.id ? doc(classesCollectionRef, newClass.id) : doc(classesCollectionRef);
+    const scheduleDoc = await getDoc(scheduleRef);
+        if (!scheduleDoc.exists()) {
+            throw new Error('Schedule document does not exist.');
+        }
 
-    await setDoc(classRef, newClass);
+        const scheduleData = scheduleDoc.data();
+        if (!scheduleData.classes) {
+            scheduleData.classes = {};
+        }
+
+        const classId = newClass.id || generateRandomId(20);
+
+        scheduleData.classes[classId] = newClass;
+
+        await setDoc(scheduleRef, scheduleData);
 
     return newClass.id;
 }
