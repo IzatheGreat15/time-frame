@@ -1,6 +1,6 @@
 <template>
     <div class="table-container">
-        <table class="w-full h-50">
+        <table class="w-full">
             <thead>
                 <tr class="text-center">
                     <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[0]">Sun</th>
