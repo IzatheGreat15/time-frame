@@ -135,8 +135,16 @@ export const getUserSchedulesRealTime = async (userId, callback) => {
         const unsubscribe = onSnapshot(scheduleRef, (querySnapshot) => {
             const schedules = [];
             querySnapshot.forEach((doc) => {
+                const scheduleData = { id: doc.id, ...doc.data() };
+
+                // Transform the classes data
+                const transformedClasses = transformClasses(scheduleData.classes);
+
+                // Append transformed classes data to the schedule data
+                scheduleData.classes = transformedClasses;
+
                 // Push schedule data to the schedules array
-                schedules.push({ id: doc.id, ...doc.data() });
+                schedules.push(scheduleData);
             });
             // Pass the schedules array to the callback function
             callback(schedules);
@@ -148,4 +156,39 @@ export const getUserSchedulesRealTime = async (userId, callback) => {
         // Throw any errors that occur during the process
         throw error;
     }
+}
+
+function transformClasses(classes) {
+    const transformedClasses = [];
+
+    for (const classId in classes) {
+        const classData = classes[classId];
+        const times = classData.times || [];
+
+        times.forEach(time => {
+            transformedClasses.push({
+                name: classData.name,
+                startTime: convertTimeToMinutes(time.start),
+                endTime: convertTimeToMinutes(time.end),
+                day: time.day,
+                color: classData.color
+            });
+        });
+    }
+    console.log(transformedClasses)
+    return transformedClasses;
+}
+
+function convertTimeToMinutes(timeObj) {
+    let hour = timeObj.hour;
+    let minute = timeObj.minute;
+    
+
+    // Adjust for PM shift
+    if (timeObj.shift === 'PM' && timeObj.hour !== 12) {
+        hour += 12;
+    }
+    let totalMinutes = hour.toString() + minute.toString();
+    console.log(hour, minute, totalMinutes, timeObj.shift)
+    return totalMinutes.toString();
 }

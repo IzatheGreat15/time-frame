@@ -155,6 +155,7 @@ export default {
             backgroundImage: '',
             textColor: '#ccc'
           },
+          classes: []
         });
         this.selectedImage = null;
         this.selectedColor = null;

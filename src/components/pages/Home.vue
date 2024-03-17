@@ -13,7 +13,7 @@
                 </svg>
             </div>
             <!-- Main content goes here -->
-            <Classes :selectedSchedule="selectedSchedule"/>
+            <Classes v-if="selectedSchedule" :selectedSchedule="selectedSchedule"/>
         </div>
 
         <!-- Add Class Button -->
@@ -53,6 +53,7 @@ export default {
                 backgroundImage: '',
                 textColor: '#ccc'
                 },
+                classes: []
             },
         };
     },
@@ -66,6 +67,9 @@ export default {
                 if(this.user) {
                     const unsubscribe = getUserSchedulesRealTime(this.user.email, (schedules) => {
                         this.schedules = schedules;
+                        if(this.selectedSchedule.id) {
+                            this.selectedSchedule = this.schedules.find(schedule => schedule.id === this.selectedSchedule.id);
+                        }
                     });
                     
                 }

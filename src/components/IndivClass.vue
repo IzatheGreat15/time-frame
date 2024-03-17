@@ -1,5 +1,5 @@
 <template>
-  <td class="h-auto p-0" :class="classInfo.color" role="button" v-if="typeof classInfo == 'object'" :rowspan="calculateDuration(classInfo.startTime, classInfo.endTime)">
+  <td class="h-auto p-0" :style="{background: classInfo.color}" role="button" v-if="typeof classInfo == 'object'" :rowspan="calculateDuration(classInfo.startTime, classInfo.endTime)">
     <div class="h-100 d-flex flex-column p-2">
       <p class="m-0 d-flex justify-content-start align-items-center">{{convertTimeTo12HourFormat(classInfo.startTime)}}</p>
       <p class="full m-0 d-flex justify-content-center align-items-center">{{ classInfo.name }}</p>
@@ -14,11 +14,19 @@ export default {
     name: 'IndivClass',
     props: {
       classInfo: [Object, Number],
-      increment: Number
+      increment: Number,
+      day: Number,
+      index: Number
     },
     methods: {
       calculateDuration(startTime, endTime) {
-        const duration = (parseInt(endTime) - parseInt(startTime)) / 100 * 60 / this.increment;
+        let duration = (parseInt(endTime) - parseInt(startTime));
+        if(duration > 0) {
+          if(duration >= 100){
+            return Math.ceil(duration / 100 * 60 / this.increment);
+          }
+          return Math.ceil(duration / this.increment);
+        }
         return duration != NaN ? duration : 1;
       },
       convertTimeTo12HourFormat(time) {

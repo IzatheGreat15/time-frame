@@ -14,8 +14,10 @@
             </thead>
             <tbody>
                 <tr v-for="time in totalDuration" :key="time" class="text-center">
-                    <template v-for="day in selectedSchedule.settings.days.filter((day, index) => selectedSchedule.settings.days[index]).length" :key="day">
-                        <IndivClass :classInfo="findClass(time, day)" :increment="increment"/>
+                    <template v-for="(day, index) in selectedSchedule.settings.days.length" :key="day">
+                        <template v-if="selectedSchedule.settings.days[index]">
+                            <IndivClass :classInfo="findClass(time, index)" :increment="increment" :day="day" :index="index"/>
+                        </template>
                     </template>
                 </tr>
             </tbody>
@@ -32,57 +34,16 @@ export default {
     },
     data() {
         return {
-            increment: 30,
-            classes: [
-                {
-                    name: 'Class 1',
-                    startTime: '730',
-                    endTime: '930',
-                    day: '0',
-                    color: 'bg-danger'
-                },
-                {
-                    name: 'Class 1',
-                    startTime: '730',
-                    endTime: '930',
-                    day: '2',
-                    color: 'bg-danger'
-                },
-                {
-                    name: 'Class 2',
-                    startTime: '1030',
-                    endTime: '1730',
-                    day: '0',
-                    color: 'bg-dark'
-                },
-                {
-                    name: 'Class 2',
-                    startTime: '730',
-                    endTime: '830',
-                    day: '1',
-                    color: 'bg-dark'
-                },
-                {
-                    name: 'Class 5',
-                    startTime: '730',
-                    endTime: '930',
-                    day: '4',
-                    color: 'bg-info'
-                },
-                {
-                    name: 'Class 3',
-                    startTime: '1330',
-                    endTime: '1430',
-                    day: '2',
-                    color: 'bg-success'
-                },
-            ]
+            increment: 5,
         }
     },
     props: {
         selectedSchedule: {
             type: Object
-        }
+        },
+    },
+    created() {
+        console.log(this.selectedSchedule);
     },
     computed: {
         columnWidth() {
@@ -90,13 +51,28 @@ export default {
             return selectedDays > 0 ? `${100 / selectedDays}%` : '0%';
         },
         smallestStartTime() {
-            return Math.min(...this.classes.map(classItem => parseInt(classItem.startTime)));
+            if (this.selectedSchedule.classes.length === 0) {
+                return 0;
+            }
+
+            return Math.min(...this.selectedSchedule.classes.map(classItem => parseInt(classItem.startTime)));
         },
         largestEndTime() {
-            return Math.max(...this.classes.map(classItem => parseInt(classItem.endTime)));
+            if (this.selectedSchedule.classes.length === 0) {
+                return 0;
+            }
+
+            return Math.max(...this.selectedSchedule.classes.map(classItem => parseInt(classItem.endTime)));
         },
         totalDuration() {
-            return (this.largestEndTime - this.smallestStartTime) / 100 * 60 / this.increment;
+            let totalDuration = (this.largestEndTime - this.smallestStartTime);
+            if(totalDuration > 0) {
+                if(totalDuration >= 100){
+                    return Math.ceil(totalDuration / 100 * 60 / this.increment);
+                }
+                return Math.ceil(totalDuration / this.increment);
+            }
+            return 0;
         },
     },
     methods: {
@@ -118,8 +94,8 @@ export default {
                 currentTime = this.addSectionToTime(currentTime);
             }
 
-            let foundClass = this.classes.find(classItem => {
-                return classItem.day == parseInt(day - 1) && currentTime >= parseInt(classItem.startTime) && currentTime <= parseInt(classItem.endTime);
+            let foundClass = this.selectedSchedule.classes.find(classItem => {
+                return classItem.day == parseInt(day) && currentTime > parseInt(classItem.startTime) && currentTime <= parseInt(classItem.endTime);
             });
 
             if(foundClass) {
