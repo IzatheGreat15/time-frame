@@ -4,7 +4,7 @@
         <Sidebar v-if="user && schedules" :isHidden="sidebarHidden" :schedules="schedules" :user="user" @toggleSidebar="toggleSidebar" :schedule="selectedSchedule" @schedule-updated="handleScheduleUpdate"/>
 
         <!-- Main content -->
-        <div class="position-absolute h-full w-full" 
+        <div class="position-absolute h-full w-full bg-secondary" 
             id="main-content" 
             :style="{ 'background-image': 'url(' + (typeof selectedSchedule.settings.backgroundImage == 'string' ? selectedSchedule.settings.backgroundImage : selectedSchedule.settings.selectedImage) + ')' }">
             <div class="m-3">

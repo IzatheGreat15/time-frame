@@ -1,5 +1,5 @@
 <template>
-    <div class="table-container">
+    <div class="table-container ">
         <table class="w-full">
             <thead>
                 <tr class="text-center">
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { getMinutesDifference } from '@/functions';
 import IndivClass from './IndivClass.vue';
 export default {
     name: 'Classes',
@@ -65,13 +66,11 @@ export default {
             return Math.max(...this.selectedSchedule.classes.map(classItem => parseInt(classItem.endTime)));
         },
         totalDuration() {
-            let totalDuration = (this.largestEndTime - this.smallestStartTime);
+            let totalDuration = getMinutesDifference(this.smallestStartTime, this.largestEndTime);
             if(totalDuration > 0) {
-                if(totalDuration >= 100){
-                    return Math.ceil(totalDuration / 100 * 60 / this.increment);
-                }
                 return Math.ceil(totalDuration / this.increment);
             }
+
             return 0;
         },
     },

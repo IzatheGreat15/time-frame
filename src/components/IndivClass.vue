@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import { getMinutesDifference } from '@/functions';
+
 export default {
     name: 'IndivClass',
     props: {
@@ -20,13 +22,11 @@ export default {
     },
     methods: {
       calculateDuration(startTime, endTime) {
-        let duration = (parseInt(endTime) - parseInt(startTime));
+        let duration = getMinutesDifference(startTime, endTime);
         if(duration > 0) {
-          if(duration >= 100){
-            return Math.ceil(duration / 100 * 60 / this.increment);
-          }
           return Math.ceil(duration / this.increment);
         }
+        
         return duration != NaN ? duration : 1;
       },
       convertTimeTo12HourFormat(time) {

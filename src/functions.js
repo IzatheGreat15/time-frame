@@ -188,7 +188,35 @@ function convertTimeToMinutes(timeObj) {
     if (timeObj.shift === 'PM' && timeObj.hour !== 12) {
         hour += 12;
     }
-    let totalMinutes = hour.toString() + minute.toString();
-    console.log(hour, minute, totalMinutes, timeObj.shift)
+    let totalMinutes = hour.toString() + (minute.toString().padStart(2, '0'));
+    
     return totalMinutes.toString();
+}
+
+function getTimeInMinutes(timeString) {
+    // Convert the time string to a string and pad it if necessary
+    const paddedTimeString = timeString.toString().padStart(4, '0');
+
+    // Extract hours and minutes from the padded time string
+    const hours = parseInt(paddedTimeString.substring(0, 2), 10);
+    const minutes = parseInt(paddedTimeString.substring(2), 10);
+
+    // Convert hours and minutes to total minutes
+    return (hours * 60) + minutes;
+}
+  
+export const getMinutesDifference = (time1, time2) => {
+    // Get the time in minutes for each time string
+    const minutes1 = getTimeInMinutes(time1);
+    const minutes2 = getTimeInMinutes(time2);
+    
+    // Calculate the difference in minutes
+    let difference = minutes2 - minutes1;
+    
+    // Handle negative differences (borrow)
+    if (difference < 0) {
+        difference += 24 * 60; // Add 24 hours worth of minutes
+    }
+    
+    return difference;
 }
