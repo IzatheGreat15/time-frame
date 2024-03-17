@@ -13,7 +13,8 @@
                     <option v-for="hour in 12" :key="hour" :value="hour">{{ hour }}</option>
                 </select>
                 <select name="start-minute" v-model="time.start.minute"  id="start-minute" class="form-control p-1">
-                    <option v-for="minute in 12" :key="minute" :value="(minute - 1) * 5">{{ ((minute - 1) * 5 < 10 ? '0' : '') + (minute - 1) * 5 }}</option>
+                    <option value="00">00</option>
+                    <option value="30">30</option>
                 </select>
                 <select name="start-shift" v-model="time.start.shift"  id="start-shift" class="form-control p-1">
                     <option value="AM">AM</option>
@@ -28,7 +29,8 @@
                     <option v-for="hour in 12" :key="hour" :value="hour">{{ hour }}</option>
                 </select>
                 <select name="end-minute" v-model="time.end.minute"  id="end-minute" class="form-control p-1">
-                    <option v-for="minute in 12" :key="minute" :value="((minute - 1) * 5 < 10 ? '0' : '') + (minute - 1) * 5">{{ ((minute - 1) * 5 < 10 ? '0' : '') + (minute - 1) * 5 }}</option>
+                    <option value="00">00</option>
+                    <option value="30">30</option>
                 </select>
                 <select name="end-shift" v-model="time.end.shift"  id="end-shift" class="form-control p-1">
                     <option value="AM">AM</option>

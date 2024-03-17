@@ -4,10 +4,10 @@
         <Sidebar v-if="user && schedules" :isHidden="sidebarHidden" :schedules="schedules" :user="user" @toggleSidebar="toggleSidebar" :schedule="selectedSchedule" @schedule-updated="handleScheduleUpdate"/>
 
         <!-- Main content -->
-        <div class="position-absolute h-full w-full bg-secondary" 
+        <div class="position-absolute h-full w-full" 
             id="main-content" 
             :style="{ 'background-image': 'url(' + (typeof selectedSchedule.settings.backgroundImage == 'string' ? selectedSchedule.settings.backgroundImage : selectedSchedule.settings.selectedImage) + ')' }">
-            <div class="m-3">
+            <div class="p-3 position-absolute" style="z-index: 2;">
                 <svg xmlns="http://www.w3.org/2000/svg" @click="toggleSidebar" width="24" height="24" fill="currentColor" class="bi bi-list text-center" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
                 </svg>
@@ -97,5 +97,6 @@ svg {
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
+  overflow-x: none;
 }
 </style>

@@ -1,15 +1,15 @@
 <template>
-    <div class="table-container ">
-        <table class="w-full">
+    <div class="table-container">
+        <table class="w-full h-50">
             <thead>
                 <tr class="text-center">
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[0]">Sun</th>
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[1]">Mon</th>
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[2]">Tue</th>
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[3]">Wed</th>
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[4]">Thu</th>
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[5]">Fri</th>
-                    <th :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[6]">Sat</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[0]">Sun</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[1]">Mon</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[2]">Tue</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[3]">Wed</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[4]">Thu</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[5]">Fri</th>
+                    <th class="p-2" :style="{'width' : columnWidth}" v-if="selectedSchedule.settings.days[6]">Sat</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@ export default {
     },
     data() {
         return {
-            increment: 5,
+            increment: 30,
         }
     },
     props: {
