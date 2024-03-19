@@ -1,5 +1,5 @@
 <template>
-  <td class="h-auto p-0" :style="{background: classInfo.color}" role="button" v-if="typeof classInfo == 'object'" :rowspan="calculateDuration(classInfo.startTime, classInfo.endTime)">
+  <td class="h-auto p-0" :style="{background: hexToRgba(classInfo.color, 0.8)}" role="button" v-if="typeof classInfo == 'object'" :rowspan="calculateDuration(classInfo.startTime, classInfo.endTime)">
     <div class="h-100 d-flex flex-column p-2">
       <p class="m-0 d-flex justify-content-start align-items-center">{{convertTimeTo12HourFormat(classInfo.startTime)}}</p>
       <p class="full m-0 d-flex justify-content-center align-items-center">{{ classInfo.name }}</p>
@@ -47,6 +47,13 @@ export default {
         let formattedTime = hours + ':' + formattedMinutes + ' ' + period;
 
         return formattedTime;
+      },
+      hexToRgba(hex, alpha) {
+        hex = hex.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     }
 }

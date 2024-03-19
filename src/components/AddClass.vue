@@ -70,7 +70,6 @@ export default {
     data(){
         return {
             classInfo: {
-                id: null,
                 name: '',
                 room: '',
                 teacher: '',
@@ -152,9 +151,12 @@ export default {
             if(this.checkValidation()) {
                 document.getElementById('save-class-btn').disabled = true;
                 try{
-                    await addClass(this.scheduleId, this.userId, this.classInfo);
-                    $('#addClassModal').modal('hide');
-                    document.getElementById('save-class-btn').disabled = false;
+                    const newClassId = await addClass(this.scheduleId, this.userId, this.classInfo);
+       
+                    if(newClassId) {
+                        $('#addClassModal').modal('hide');
+                        document.getElementById('save-class-btn').disabled = false;
+                    }
                 } catch (error) {
                     console.error('Error adding class:', error);
                     document.getElementById('save-class-btn').disabled = false;

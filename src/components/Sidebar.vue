@@ -13,7 +13,8 @@
         <form @submit.prevent="handleScheduleForm" class="mt-3 text-white">
             <div class="d-flex">
                 <!-- <button class="btn btn-success mx-1" type="button" data-toggle="modal" data-target="#addScheduleModal">Add</button> -->
-                <vue-select id="select" :options="options" class="form-control p-0" v-model="scheduleId"></vue-select>
+                <vue-select id="select" :options="options" class="form-control p-0 mr-1" v-model="scheduleId"></vue-select>
+                <button class="btn btn-success mx-1" type="button">Capture</button>
                 <button class="btn btn-danger mx-1" type="button">Delete</button>
             </div>
 

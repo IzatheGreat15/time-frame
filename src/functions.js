@@ -89,22 +89,28 @@ export const addClass = async (schedule, user, newClass) => {
     const userRef = doc(db, 'users', user);
     const scheduleRef = doc(userRef, 'schedules', schedule);
     const scheduleDoc = await getDoc(scheduleRef);
-        if (!scheduleDoc.exists()) {
-            throw new Error('Schedule document does not exist.');
-        }
+    if (!scheduleDoc.exists()) {
+        throw new Error('Schedule document does not exist.');
+    }
 
-        const scheduleData = scheduleDoc.data();
-        if (!scheduleData.classes) {
-            scheduleData.classes = {};
-        }
+    const scheduleData = scheduleDoc.data();
 
-        const classId = newClass.id || generateRandomId(20);
+    if (!scheduleData.classes) {
+        scheduleData.classes = {};
+    }
 
-        scheduleData.classes[classId] = newClass;
+    const classId = newClass.id ? newClass.id : generateRandomId(20);
+    const index = scheduleData.classes.findIndex((classData) => classData.id === classId);
+    
+    if (index !== -1) {
+        scheduleData.classes[index] = newClass; // existing class
+    }else {
+        scheduleData.classes.push({id: classId, ...newClass}); // new class
+    }
 
-        await setDoc(scheduleRef, scheduleData);
+    await setDoc(scheduleRef, scheduleData);
 
-    return newClass.id;
+    return classId;
 }
 
 export const getSchedule = async (userId, scheduleId) => {
