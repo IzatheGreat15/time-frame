@@ -14,7 +14,7 @@
             <div class="d-flex">
                 <!-- <button class="btn btn-success mx-1" type="button" data-toggle="modal" data-target="#addScheduleModal">Add</button> -->
                 <vue-select id="select" :options="options" class="form-control p-0 mr-1" v-model="scheduleId"></vue-select>
-                <button class="btn btn-success mx-1" type="button">Capture</button>
+                <button class="btn btn-success mx-1" type="button" @click="$emit('captureSchedule')">Capture</button>
                 <button class="btn btn-danger mx-1" type="button">Delete</button>
             </div>
 
@@ -59,8 +59,8 @@
             </div>
 
             <div class="form-group">
-              <label for="days-shown">Dimensions</label>
-              <div class="">
+              <div style="display: none;">
+                <label for="days-shown">Dimensions</label>
                 <div v-for="(dim, index) in dimensions" :key="index" class="form-check my-1">
                   <input class="form-check-input" type="radio" name="dimension" v-model="selectedDimension" @change="handleDimension(dim.width, dim.height)" :id="dim.name" :value="dim.name">
                   <label class="form-check-label" :for="dim.name">
@@ -78,13 +78,13 @@
                     <input type="number" class="form-control my-0 p-0 mx-3" v-model="customHeight" @change="handleDimension(customWidth, customHeight)" placeholder="Height" name="height">  
                   </div>
                 </div>
-
-                <div class="my-3 text-right d-flex justify-content-end align-items-center">
-                  <div v-if="loading" class="spinner-border spinner-border-sm text-light mr-2" role="status">
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                  <button class="btn btn-success" id="submit-btn" type="submit">Add</button>
+              </div>
+              
+              <div class="my-3 text-right d-flex justify-content-end align-items-center">
+                <div v-if="loading" class="spinner-border spinner-border-sm text-light mr-2" role="status">
+                  <span class="sr-only">Loading...</span>
                 </div>
+                <button class="btn btn-success" id="submit-btn" type="submit">Add</button>
               </div>
             </div>
         </form>
@@ -104,7 +104,7 @@ export default {
     schedules: Array,
     schedule: Object,
   },
-  emits: ['toggleSidebar', 'scheduleUpdated'],
+  emits: ['toggleSidebar', 'scheduleUpdated', 'captureSchedule'],
   data() {
     return {
       scheduleId: null,

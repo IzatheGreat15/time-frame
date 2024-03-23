@@ -1,5 +1,5 @@
 <template>
-    <div class="table-container">
+    <div class="table-container" id="class-schedule">
         <table class="w-full">
             <thead>
                 <tr class="text-center">
